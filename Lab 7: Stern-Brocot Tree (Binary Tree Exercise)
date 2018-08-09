@@ -1,0 +1,228 @@
+
+Background
+LAB 7 Due Date August/2/2017 at 11:59 p.m.
+The Stern-Brocot tree is a nice way to construct the set of all nonnegative fraction m/n
+with gcd(m, n) = 1. The idea is to start with two fractions 0 , 1 (if we regard as 1/0 as 10
+infinity in its “lowest” terms :P) and then repeat the following step as many times as necessary
+m+m′ m m′ Insert n + n′ between two adjacent fractions n and n′ .
+The whole construction can be seen as BST whose top level looks like this:
+         1/1
+   1/2         2/1
+ 
+ 1/3, 2/3     3/2, 3/1
+ 
+    We might say that the left parent of 1/1 is 0/1 and its right parent is 1/0 to simplify the following statement:
+m+m′ m m′ Each fraction is n + n′ , where n is the nearest ancestor above and to the left, and n′
+is the nearest ancestor above and to the right.
+Assignment
+Create a method that constructs that given a nonnegative integer d constructs the Stern- Brocot tree of at depth d. 
+Also implement the inorder, postorder and preorder algorithms.
+Deliverable
+Your TA will instruct you.
+
+import java.util.ArrayList;
+
+/**
+ * Created by LoriPena on 7/26/17.
+ * Lorianne Pena with help from notes by Dr. Urenda
+ * CS 2401 Summer 2017
+ * Lab 7
+ */
+public class Pena7 implements Lab7Interface {
+    public static class BinaryTreeNode {//class structure from notes by Dr. Urenda
+        String data;
+        BinaryTreeNode rightChild;
+        BinaryTreeNode leftChild;
+        BinaryTreeNode parent;
+
+        public BinaryTreeNode() {//default constructor
+        }
+
+        public BinaryTreeNode(String data) {//method to pass strings
+
+            this.data = data;
+        }
+    }
+
+    public static class SternBrocot {//class for SternBrocot tree
+        BinaryTreeNode root;
+
+        public SternBrocot() {//constructor
+
+            root = null;
+        }
+
+    }
+
+    public ArrayList<String> postOrder = new ArrayList<> ( );//to assist the helper methods
+    public ArrayList<String> preOrder = new ArrayList<> ( );
+    public ArrayList<String> inOrder = new ArrayList<> ( );
+
+    /**
+     * This method is a helper method for post order traversal in the binary tree in a (left,right,root) pattern.
+     *
+     * @param node takes a node from the BinaryTreeNode class being we traverse each node in the binary tree.
+     */
+    public void postOrderHelper(BinaryTreeNode node) {
+        if (node != null) {
+            postOrderHelper (node.leftChild);//left
+            postOrderHelper (node.rightChild);//right
+            postOrder.add (node.data);//root
+        }
+    }
+
+    /**
+     * This method is a helper method for pre order traversal in the binary tree in a (root, left, right) pattern.
+     *
+     * @param node takes a node from the BinaryTreeNode class being we traverse each node in the binary tree.
+     */
+    public void preOrderHelper(BinaryTreeNode node) {
+        if (node != null) {
+            preOrder.add (node.data);//root
+            preOrderHelper (node.leftChild);//left
+            preOrderHelper (node.rightChild);//right
+        }
+    }
+
+    /**
+     * This method is a helper method for in order traversal in the binary tree in a (left,root,right) pattern.
+     *
+     * @param node takes a node from the BinaryTreeNode class being we traverse each node in the binary tree.
+     */
+    public void inOrderHelper(BinaryTreeNode node) {
+        if (node != null) {
+            inOrderHelper (node.leftChild);//left
+            inOrder.add (node.data);//root
+            inOrderHelper (node.rightChild);//right
+        }
+    }
+
+    /**
+     * This method is to help get the left parent type string to help us identify which parent is the left of the root.
+     * As well as which child(in this case right child) it needs to point to. This
+     * also helps to aid us in determining what is the left parent of the root in this situation.
+     *
+     * @param node takes a node from the BinaryTreeNode class so we can set the node to the correct parent and have it
+     *             point to the right child.
+     * @return recursively returns the parent
+     */
+    public String getLeftParentString(BinaryTreeNode node) {
+        if (node == null) return null;
+        BinaryTreeNode parent = node.parent;
+        if (parent == null) return "0/1";//hard coding the left parent that points to root
+        if (parent.rightChild == node) return parent.data;
+        else {
+            return getLeftParentString (parent);
+        }
+    }
+
+    /**
+     * This method is to help get the right parent type string to help us identify which parent is the right of the root.
+     * As well as which child(in the case left child) it needs to point to. This also helps to aid us in determining
+     * what is the right parent of the root in this situation.
+     *
+     * @param node takes a node from the BinaryTreeNode class so we can set the node to the correct parent and have it
+     *             point to the left child.
+     * @return recursively returns the parent.
+     */
+    public String getRightParentString(BinaryTreeNode node) {
+        if (node == null) return null;
+        BinaryTreeNode parent = node.parent;
+        if (parent == null) return "1/0";//hard coding the right parent that points to root
+        if (parent.leftChild == node) return parent.data;
+        else {
+            return getRightParentString (parent);
+        }
+    }
+
+    /**
+     * This method creates the Nodes for the tree that takes in a depth that is set by the user. This method uses strings
+     * to manufacture the fractions needed to go into the appropriate nodes.
+     *
+     * @param node  from the BinaryTreeNode class so we can build the tree
+     * @param depth will determine how deep or how many levels the tree goes.
+     * @return the node with the appropriate fractions in the binary tree.
+     */
+    public BinaryTreeNode createNode(BinaryTreeNode node, int depth) {
+        if (depth == -1) return null;
+        if (depth == 0) return node;
+        else {
+            String rightParent = getRightParentString (node);
+            String leftParent = getLeftParentString (node);
+            int topLeftP = Integer.parseInt (node.data.substring (0, 1)) + Integer.parseInt (leftParent.substring (0, 1));
+            int bottomLeftP = Integer.parseInt (node.data.substring (2)) + Integer.parseInt (leftParent.substring (2));
+            String dataLeftP = topLeftP + "/" + bottomLeftP;
+            node.leftChild = new BinaryTreeNode (dataLeftP);
+            node.leftChild.parent = node;
+            int topRightP = Integer.parseInt (node.data.substring (0, 1)) + Integer.parseInt (rightParent.substring (0, 1));
+            int bottomRightP = Integer.parseInt (node.data.substring (2)) + Integer.parseInt (rightParent.substring (2));
+            String dataRightP = topRightP + "/" + bottomRightP;
+            node.rightChild = new BinaryTreeNode (dataRightP);
+            node.rightChild.parent = node;
+            createNode (node.leftChild, depth - 1);
+            createNode (node.rightChild, depth - 1);
+            return node;
+
+        }
+    }
+
+    /**
+     * A method that given an integer d, returns an array list of strings
+     * containing all the elements of the Stern-Brocot tree of depth d
+     * IN ORDER. By convention, a tree with depth 0 contains a single node.
+     * As an example, the Stern-Brocot tree in the lab PDF is the tree
+     * created had d been equal to 2, thus this method would have returned
+     * the array list: ["1/3", "1/2", "2/3", "1/1","3/2","2/1","3/1"]
+     *
+     * @param depth an int representing the depth of the desired tree.
+     * @return an array list containing the element of the tree IN ORDER.
+     */
+    @Override
+    public ArrayList<String> sternBrocotTreeInOrder(int depth) {
+        inOrderHelper (createNode (new BinaryTreeNode ("1/1"), depth));
+
+        return inOrder;
+    }
+
+    /**
+     * A method that given an integer d, returns an array list of strings
+     * containing all the elements of the Stern-Brocot tree of depth d in
+     * POST ORDER.
+     *
+     * @param depth an int representing the depth of the desired tree.
+     * @return an array list containing the element of the tree in POST ORDER.
+     */
+    @Override
+    public ArrayList<String> sternBrocotTreePostOrder(int depth) {
+        postOrderHelper (createNode (new BinaryTreeNode ("1/1"), depth));
+
+        return postOrder;
+    }
+
+    /**
+     * A method that given an integer d, returns an array list of strings
+     * containing all the elements of the Stern-Brocot tree of depth d in
+     * PRE ORDER.
+     *
+     * @param depth an int representing the depth of the desired tree.
+     * @return an array list containing the element of the tree in PRE ORDER.
+     */
+    @Override
+    public ArrayList<String> sternBrocotTreePreOrder(int depth) {
+        preOrderHelper (createNode (new BinaryTreeNode ("1/1"), depth));
+
+        return preOrder;
+    }
+
+    public static void main(String[] args) {
+        Pena7 test = new Pena7 ( );
+        SternBrocot sb = new SternBrocot ( );
+        BinaryTreeNode root = new BinaryTreeNode ( );
+        BinaryTreeNode left = new BinaryTreeNode ( );
+        BinaryTreeNode right = new BinaryTreeNode ( );
+        System.out.println (test.sternBrocotTreeInOrder (3));
+        System.out.println (test.sternBrocotTreePostOrder (3));
+        System.out.println (test.sternBrocotTreePreOrder (3));
+    }
+}
+
