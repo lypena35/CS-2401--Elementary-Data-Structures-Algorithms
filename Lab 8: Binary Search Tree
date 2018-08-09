@@ -1,0 +1,151 @@
+
+Background
+LAB 8 Due Date August/2/2017 at 11:59 p.m.
+The goal of this assignment is to practice binary search trees and heapsort.
+Assignment
+Implement the following sorting methods:
+1. place elements one by one into a balanced binary search tree, and then produce the elements in the increasing order (in-order);
+2. perform heapsort.
+For each of these two methods, record the computation time needed for each sorting method; for sizes n = 100,200,300, and 400 run each several times (e.g., 100) with a randomly generated array and record, for each of the methods, how the average running time grows as a function of n. 
+Explain, to the TA, how the dependence of running time on the array size compares with the estimates of the running time given in the book.
+Deliverable
+Your TA will instruct you.
+
+
+
+
+import java.util.Random;
+
+/**
+ * Created by LoriPena on 7/26/17.
+ * Lorianne Pena with help from http://www.geeksforgeeks.org/heap-sort/
+ * CS 2401 Summer 2017
+ * Lab 8
+ */
+public class Pena8 implements Lab8Interface {
+    static int counter = 0;
+
+    public static class HeapSort {
+        /**
+         * This method is to sort a array using the heap sort method.
+         *
+         * @param array takes in a random unsorted array and sorts the integers in the array.
+         */
+        public void sort(int array[]) {
+            int size = array.length;
+            for (int i = size / 2 - 1; i >= 0; i--) {//rearranging the array a.k.a building the heap
+                counter++;
+                heapSortHelper (array, size, i);
+            }
+            //retrieving the element one at a time and swapping the current largest number until it reaches the end of the array
+            for (int i = size - 1; i >= 0; i--) {
+                int temp = array[0];
+                array[0] = array[i];
+                array[i] = temp;
+                heapSortHelper (array, i, 0);
+            }
+        }
+
+        /**
+         * This method is to help the sorting method sort the array.
+         * @param arr        takes in a array
+         * @param sizeOfHeap the size of the array
+         * @param currentNum the current number that is being checked in the array.
+         */
+        void heapSortHelper(int arr[], int sizeOfHeap, int currentNum) {
+            int currentLargestNum = currentNum;
+            int leftNumNextToLargestNum = 2 * currentNum + 1;
+            int rightNumNextToLargestNum = 2 * currentNum + 2;
+            //if the leftNumNextToLargestNum is larger then the currentLargestNum
+            //and the sizeOfHeap is less then leftNumNextToLargestNum, set current largest number with the left number
+            //next to the largest number
+            if (leftNumNextToLargestNum < sizeOfHeap && arr[leftNumNextToLargestNum] > arr[currentLargestNum])
+                currentLargestNum = leftNumNextToLargestNum;
+            //if rightNumNextToLargestNum is larger then current largest number and is smaller then the size of the heap
+            //set current largest number to the right number next to the largest number
+            if (rightNumNextToLargestNum < sizeOfHeap && arr[rightNumNextToLargestNum] > arr[currentLargestNum])
+                currentLargestNum = rightNumNextToLargestNum;
+
+            if (currentLargestNum != currentNum) {// if the current largest number is not the currentNum we swap
+                int swap = arr[currentNum];
+                arr[currentNum] = arr[currentLargestNum];
+                arr[currentLargestNum] = swap;
+                heapSortHelper (arr, sizeOfHeap, currentLargestNum);
+            }
+        }
+    }
+    /**
+     * This method is to generate random arrays needed to test heap sort class
+     *
+     * @param size is the size of the array needed
+     * @return the array that has random unsorted integers
+     */
+    public static int[] randomGenerator(int size) {
+        int[] array = new int[size];
+        Random rand = new Random ( );
+        for (int i = 0; i < size; i++) {
+            array[i] = rand.nextInt (1000);
+        }
+        return array;
+    }
+    /**
+     * A method to print out the sorted array
+     *
+     * @param array takes in a array so it can print array
+     */
+    static void printArray(int array[]) {
+        int n = array.length;
+        for (int i = 0; i < n; ++i) {
+            System.out.print (array[i] + " ");
+        }
+    }
+    /**
+     * A method that given an array of unsorted ints, sorts
+     * the ORIGINAL array using a balanced BST.
+     *
+     * @param A the array of unsorted ints to be sorted
+     */
+    @Override
+    public void balancedBST(int[] A) {
+    }
+    /**
+     * A method that given an array of unsorted ints, sorts
+     * the ORIGINAL array using heapsort.
+     *
+     * @param A the array of unsorted ints to be sorted
+     */
+    @Override
+    public void heapSort(int[] A) {
+        HeapSort newHeap = new HeapSort ( );
+        newHeap.sort (A);
+        printArray (A);
+    }
+
+    public static void main(String[] args) {
+        Pena8 test = new Pena8 ( );
+        counter = 0;
+        System.out.println ("Size 100");
+        test.heapSort (randomGenerator (100));
+        System.out.println ("");
+        System.out.println ("Number of Comparisons:" + counter);
+        System.out.println ("");
+
+        System.out.println ("Size 200");
+        test.heapSort (randomGenerator (200));
+        System.out.println ("");
+        System.out.println ("Number of Comparisons:" + counter);
+        System.out.println ("");
+
+        System.out.println ("Size 300");
+        test.heapSort (randomGenerator (300));
+        System.out.println ("");
+        System.out.println ("Number of Comparisons:" + counter);
+        System.out.println ("");
+
+        System.out.println ("Size 400");
+        test.heapSort (randomGenerator (400));
+        System.out.println ("");
+        System.out.println ("Number of Comparisons:" + counter);
+    }
+}
+
