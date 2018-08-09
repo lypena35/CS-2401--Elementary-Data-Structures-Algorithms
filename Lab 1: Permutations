@@ -1,3 +1,33 @@
+CS 2401Elementary Data Structures
+Summer 2017, Lab 1
+
+Assignment. An array a of type T with length n can be seen as a function from the set of indices {0,1,2,...,n-1} to the set of elements of type T. For example, 
+
+char [] a = {'a','b','c','d'}
+
+defines a map that takes 0 to 'a', 1 to 'b', 2 to 'c', and 3 to 'd'. 
+We define a permutation array a of length n to be an array that contains exactly once each of the elements of the set {0,1,2,...,n-1}, this is, a can be seen as a function from the set {0,1,2,...,n-1} to {0,1,2,...,n-1}. For instance,
+
+int [] a1 = {1,3,0,2}
+
+is a permutation array, whereas 
+
+int [] a2 = {2,1,2,0}
+
+is not.
+Write a java program that takes as inputs files that contains two lines: the first line is a positive integer n that is the length of the array, the second line contains the elements of the array separated by a single space. Your program should do the following:
+Decides if a given array of integers is a permutation array.
+Given two permutation arrays, computes their composition.
+Given a permutation array, computes its inverse.
+Given a permutation array a and an integer k, computes the power a^k (=a composed to itself k times).
+Example. Suppose that a, and b are both permutation arrays given by [3,2,1,0] and [2,1,0,3] respectively, we can see that both a and b are both permutation arrays of length 4. The composition of a with b is [1,2,3,0], since 0 goes to 2, and 2 goes to 1; 1 goes to 1, and 1 goes to 2; 2 goes to 0 and 0 goes to 3; and 3 goes to 3, and 3 goes to 0.
+The inverse of a is [3,2,1,0], note that the composition of a with its inverse is [0,1,2,3], which is the identity permutation. Finally, [2,1,0,3]^2, b composed to itself, is [0,1,2,3].
+When it is due. The program is due at the beginning of the first lab section on Tuesday June 20th.
+
+How to submit: Your TA will instruct you how to submit the programs.
+
+
+
 /**
  * Created by LoriPena on 6/19/17.
  * Lorianne Pena
